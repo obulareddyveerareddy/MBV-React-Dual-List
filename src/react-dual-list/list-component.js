@@ -7,26 +7,26 @@ export default class ListComponent extends React.Component {
       return (
         <button
           type="button"
-          class="close"
+          className="close font-weight-lighter"
           aria-label="Close"
           onClick={event => {
             this.props.handler(event, entity, direction);
           }}
         >
-          <span aria-hidden="true">&times;</span>
+          <i className="fas fa-plus"></i>
         </button>
       );
     } else {
       return (
         <button
           type="button"
-          class="close"
+          className="close"
           aria-label="Close"
           onClick={event => {
             this.props.handler(event, entity, direction);
           }}
         >
-          <span aria-hidden="true">&times;</span>
+        <i class="fas fa-minus"></i>
         </button>
       );
     }
@@ -46,7 +46,7 @@ export default class ListComponent extends React.Component {
         >
           {optionsList.map(entity => {
             return (
-              <div className="btn-group">
+              <div className="btn-group" key={entity.value}>
                 {this.getButtonNameByDirectionContext(entity)}
                 <button className="btn btn-default btn-sm mt-1">
                   {entity.label}
