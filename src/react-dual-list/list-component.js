@@ -1,16 +1,38 @@
 import React from "react";
 
 export default class ListComponent extends React.Component {
-  getButtonNameByDirectionContext = () => {
+  getButtonNameByDirectionContext = entity => {
     const { direction } = this.props;
     if (direction === "right") {
-      return "+";
+      return (
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          onClick={event => {
+            this.props.handler(event, entity, direction);
+          }}
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      );
     } else {
-      return "-";
+      return (
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          onClick={event => {
+            this.props.handler(event, entity, direction);
+          }}
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      );
     }
   };
   render() {
-    const { optionsList, direction } = this.props;
+    const { optionsList } = this.props;
     return (
       <div>
         <div
@@ -25,14 +47,7 @@ export default class ListComponent extends React.Component {
           {optionsList.map(entity => {
             return (
               <div className="btn-group">
-                <button
-                  className="btn btn-primary btn-sm mt-1"
-                  onClick={event => {
-                    this.props.handler(event, entity, direction);
-                  }}
-                >
-                  {this.getButtonNameByDirectionContext()}
-                </button>
+                {this.getButtonNameByDirectionContext(entity)}
                 <button className="btn btn-default btn-sm mt-1">
                   {entity.label}
                 </button>
