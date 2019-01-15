@@ -7,29 +7,91 @@ export default class ReactDualList extends React.Component {
     super(props);
     this.state = {
       rightListOptions: [
-        { value: "one", label: "Option 1" },
-        { value: "two", label: "Option 2" },
-        { value: "three", label: "Option 3" },
-        { value: "four", label: "Option 4" },
-        { value: "five", label: "Option 5" },
-        { value: "six", label: "Option 6" }
-      ],
+        {
+            label: 'Earth',
+            options: [
+                { value: 'luna', label: 'Moon' },
+            ],
+        },
+        {
+            label: 'Mars',
+            options: [
+                { value: 'phobos', label: 'Phobos' },
+                { value: 'deimos', label: 'Deimos' },
+            ],
+        },
+        {
+            label: 'Jupiter',
+            options: [
+                { value: 'io', label: 'Io' },
+                { value: 'europa', label: 'Europa' },
+                { value: 'ganymede', label: 'Ganymede' },
+                { value: 'callisto', label: 'Callisto' },
+            ],
+        },
+    ],
       leftListOptions: []
     };
   }
-  onClickHandler = (event, entity, direction) => {
+  onClickHandler = (event, entity, direction, childEntity) => {
     const { leftListOptions, rightListOptions } = this.state;
+    var clonedEntity = _.cloneDeep(entity)
     if (direction === "right") {
-      leftListOptions.push(entity);
-      _.remove(rightListOptions, function(item) {
-        return item.value === entity.value && item.label === entity.label;
-      });
+      if(!childEntity || (entity.options && entity.options.length === 1)){
+        _.remove(rightListOptions, function(item) {
+          return item.value === entity.value && item.label === entity.label;
+        });
+      }else {
+        clonedEntity = _.cloneDeep(entity)
+        _.remove(clonedEntity.options, function(item){
+          return item.value !== childEntity.value && item.label !== childEntity.label;
+        })
+        _.forEach(rightListOptions, function (item) {
+          if(item.label === entity.label){
+            _.remove(item.options, function(item){
+              return item.value === childEntity.value && item.label === childEntity.label;
+            })
+          }
+        });
+      }
+      if(_.find(leftListOptions, {label:entity.label})){
+        _.forEach(leftListOptions, function(item){
+          if(item.label === entity.label){
+            item.options.push(childEntity)
+          }
+        })
+      }else {
+        leftListOptions.push(clonedEntity)
+      }
+      
       this.setState({ leftListOptions, rightListOptions });
     } else if (direction === "left") {
-      rightListOptions.push(entity);
-      _.remove(leftListOptions, function(item) {
-        return item.value === entity.value && item.label === entity.label;
-      });
+      if(!childEntity || (entity.options && entity.options.length === 1)){
+        _.remove(leftListOptions, function(item) {
+          return item.value === entity.value && item.label === entity.label;
+        });
+      }else {
+        clonedEntity = _.cloneDeep(entity)
+        _.remove(clonedEntity.options, function(item){
+          return item.value !== childEntity.value && item.label !== childEntity.label;
+        })
+        _.forEach(leftListOptions, function (item) {
+          if(item.label === entity.label){
+            _.remove(item.options, function (item) {
+              return item.value === childEntity.value && item.label === childEntity.label;
+            })
+          }
+        });
+      }
+      if(_.find(rightListOptions, {label:entity.label})){
+        _.forEach(rightListOptions, function(item){
+          if(item.label === entity.label){
+            item.options.push(childEntity)
+          }
+        })
+      }else {
+        rightListOptions.push(clonedEntity)
+      }
       this.setState({ rightListOptions, leftListOptions });
     }
     console.log("~~~~ check status ", this.state);

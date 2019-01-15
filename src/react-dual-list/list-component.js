@@ -1,7 +1,7 @@
 import React from "react";
 
 export default class ListComponent extends React.Component {
-  getButtonNameByDirectionContext = entity => {
+  getButtonNameByDirectionContext = (entity, item) => {
     const { direction } = this.props;
     if (direction === "right") {
       return (
@@ -10,8 +10,9 @@ export default class ListComponent extends React.Component {
           className="close font-weight-lighter"
           aria-label="Close"
           onClick={event => {
-            this.props.handler(event, entity, direction);
+            this.props.handler(event, entity, direction, item);
           }}
+          style={{fontSize:'14px'}}
         >
           <i className="fas fa-plus"></i>
         </button>
@@ -23,37 +24,58 @@ export default class ListComponent extends React.Component {
           className="close"
           aria-label="Close"
           onClick={event => {
-            this.props.handler(event, entity, direction);
+            this.props.handler(event, entity, direction, item);
           }}
+          style={{fontSize:'14px'}}
         >
-        <i class="fas fa-minus"></i>
+          <i class="fas fa-minus"></i>
         </button>
       );
     }
   };
+
+  bindListOptions = () => {
+    const { optionsList } = this.props
+    return(
+      optionsList.map(entity => {
+          return (
+            <div className="d-flex flex-column">
+              <div className="btn-group mt-1" key={entity.label}>
+                {this.getButtonNameByDirectionContext(entity)}
+                <span className="ml-1">
+                  {entity.label}
+                </span>
+              </div>
+              {entity.options ? (
+                entity.options.map((item) => {
+                  return(
+                    <div className="btn-group ml-3" key={item.value}>
+                      {this.getButtonNameByDirectionContext(entity,item)}
+                      <span className="ml-1">
+                        {item.label}
+                      </span>
+                    </div>
+                  )
+                })
+              ):''}
+            </div>
+          );
+        })
+    )
+  }
   render() {
-    const { optionsList } = this.props;
     return (
       <div>
         <div
           className="d-flex flex-column col-md-4 border"
           style={{
-            maxHeight: "10rem",
-            minHeight: "10rem",
+            maxHeight: "16rem",
+            minHeight: "16rem",
             minWidth: "10rem",
             overflowY: "auto"
           }}
         >
-          {optionsList.map(entity => {
-            return (
-              <div className="btn-group" key={entity.value}>
-                {this.getButtonNameByDirectionContext(entity)}
-                <button className="btn btn-default btn-sm mt-1">
-                  {entity.label}
-                </button>
-              </div>
-            );
-          })}
+          {this.bindListOptions()}
         </div>
       </div>
     );
